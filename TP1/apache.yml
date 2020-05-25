@@ -1,4 +1,5 @@
 - hosts: student
+  become: true
   tasks:
    - name: install apache2
      apt: name=apache2 update_cache=yes state=latest
