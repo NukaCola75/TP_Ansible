@@ -9,14 +9,12 @@
      apt: name=postfix update_cache=yes state=latest
 
    - name: download Gitlab script
-     get_url: url=https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh dest=/opt mode=755
+     get_url: url=https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh dest=/opt/
+#mode=777
 
-   - name: execute script
-     script: /opt/script.deb.sh
-     become: yes
-     become_method: su
-     become_user: ansible
-     become_flags: '-s /bin/sh'
+# Disabled for 20.04 
+#   - name: execute script
+#     script: /opt/script.deb.sh
 
    - name: install gitlab
      apt: name=gitlab-ce update_cache=yes state=latest
