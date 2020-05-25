@@ -1,0 +1,22 @@
+- hosts: student
+  become: true
+  tasks:
+   - name: Install Gitlab's deps
+     apt: name=apache2 update_cache=yes state=latest
+     apt: name=curl update_cache=yes state=latest
+     apt: name=openssh-server update_cache=yes state=latest
+     apt: name=ca-certificates update_cache=yes state=latest
+     apt: name=postfix update_cache=yes state=latest
+
+   - name: download Gitlab script
+     get_url: url=https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh dest=/opt mode=755
+
+   - name: execute script
+     script: /opt/script.deb.sh
+     become: yes
+     become_method: su
+     become_user: ansible
+     become_flags: '-s /bin/sh'
+
+   - name: install gitlab
+     apt: name=gitlab-ce update_cache=yes state=latest
