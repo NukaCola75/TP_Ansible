@@ -1,0 +1,11 @@
+- hosts: student
+  become: true
+  roles:
+  - role: apache
+    vars:
+      dependency: apache2
+      gitlab_site: gitlab.student.local
+      gitlab_site_error_log: /var/log/apache2/gitlab.student.local/
+  - role: gitlab
+    vars:
+      dependencies: [curl,openssh-server,ca-certificates,postfix]
