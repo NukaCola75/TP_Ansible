@@ -1,0 +1,9 @@
+<VirtualHost *:80>
+	ServerName {{ gitlab_site }}
+	
+	ErrorLog {{ gitlab_site_error_log }}/error.log
+	
+	ProxyPreserveHost On
+	ProxyPass / http://localhost:8888/
+	ProxyPassReverse / http://localhost:8888/
+</VirtualHost>
