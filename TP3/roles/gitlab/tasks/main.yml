@@ -1,0 +1,44 @@
+- name: "Installation Gitlab Dep"
+  apt:
+    name: "{{ dependencies }}"
+
+- name: "Get script SH"
+  get_url:
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+    dest: /tmp/
+
+- name: "Exec SC"
+  script: /tmp/script.deb.sh
+  args:
+    executable: /bin/bash
+
+- name: "Installation gitlab"
+  apt: 
+    name: "gitlab-ce"
+
+- name: "Conf url"
+  replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: "external_url 'http://gitlab.example.com'"
+    replace: "external_url 'http://gitlab.student.local'"
+
+- name: "Nginx listen adresses"
+  replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: ".* nginx.*'listen_addresses'.* = .*"
+    replace: "nginx['listen_addresses'] = ['localhost']"
+
+- name: "Nginx listen port"
+  replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: ".* nginx.*'listen_port'.* = nil"
+    replace: "nginx['listen_port'] = 8888"
+
+- name: "Nginx listen https"
+  replace: 
+    path: /etc/gitlab/gitlab.rb
+    regexp: ".* nginx.*'listen_https'.* = nil"
+    replace: "nginx['listen_https'] = false"
+
+- name: "Configuration gitlab"
+  command: gitlab-ctl reconfigure
