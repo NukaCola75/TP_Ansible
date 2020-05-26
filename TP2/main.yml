@@ -18,3 +18,30 @@
 
    - name: install gitlab
      apt: name=gitlab-ce update_cache=yes state=latest
+
+   - name: configure gitlab external url
+     replace:
+       path: /etc/gitlab/gitlab.rb
+       regexp: "external_url 'http://gitlab.example.com'" 
+       replace: external_url 'http://gitlab.student.local'
+
+   - name: Configure nginx listen addresses
+     lineinfile:
+       path: /etc/gitlab/gitlab.rb
+       regexp: "^(\\#)?nginx\\['listen_addresses'\\].*$"
+       line: "nginx['listen_addresses'] = ['localhost']"
+
+   - name: Configure nginx listen port
+     lineinfile:
+       path: /etc/gitlab/gitlab.rb
+       regexp: "^(\\#)?nginx\\['listen_port'\\].*$"
+       line: "nginx['listen_port'] = 8888"
+
+   - name: Configure nginx https
+     lineinfile:
+       path: /etc/gitlab/gitlab.rb
+       regexp: "^(\\#)?nginx\\['listen_https'\\].*$"
+       line: "nginx['listen_https'] = false"
+
+   - name: "Launch Gitlab's reconfigure"
+     command: gitlab-ctl reconfigure
