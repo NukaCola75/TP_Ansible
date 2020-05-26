@@ -1,0 +1,31 @@
+- name: "Installation apache"
+  apt:
+    name: "{{ dependency }}"
+
+- name: "Verif statut apache"
+  systemd:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: "Configuration proxy"
+  command: "{{ item }}"
+  loop:
+    - a2enmod proxy
+    - a2enmod proxy_http
+
+- name: "Dossier log"
+  command: mkdir -p /var/log/apache2/gitlab.student.local
+
+- name: "Conf gitlab"
+  template:
+    src: ../templates/gitlab_conf.j2
+    dest: /etc/apache2/sites-available/gitlab.student.local.conf
+
+- name: "Conf 2 gitlab"
+  command: a2ensite gitlab.student.local
+
+- name: "Redemarrage apache"
+  systemd:
+    name: apache2
+    state: restarted
