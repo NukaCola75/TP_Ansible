@@ -1,0 +1,47 @@
+---
+
+- name: Install apache2
+  apt:
+    name: apache2
+    update_cache: true
+    state: latest
+
+- name: Status apache2
+  service:
+    name: apache2
+    state: started
+    enabled: true
+
+- name: Creation site
+  file:
+    path: "/var/www/{{ gitlab_site }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: '0766'
+
+- name: Modules sup
+  apache2_module: 
+    name: "{{ item }}"
+    state: present
+  loop:
+    - proxy
+    - proxy_http
+  notify:
+    - restartapache
+
+- name: Logs
+  file:
+    path: "{{ gitlab_site_error_log }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: '0766'
+
+- name: Conf
+  template:
+    src: "files/apache.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ gitlab_site }}.conf"
+
+- name: Enable site
+  shell: "/usr/sbin/a2ensite {{ gitlab_site }}"
+  notify: 
+    - reloadapache

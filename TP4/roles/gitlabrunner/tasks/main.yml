@@ -1,0 +1,40 @@
+---
+
+- name: Get Script
+  get_url:
+    url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
+    dest: /tmp/gitlab-runner.script.deb.sh
+    mode: '0766'
+
+- name: Exec script
+  script: /tmp/gitlab-runner.script.deb.sh
+
+- name: Install runner
+  apt:
+    name: "gitlab-runner"
+
+- name: create directory
+  file:
+    path: "{{ gitlab_runner_directory_config }}"
+    state: directory
+    mode: '0766'
+
+- name: check file
+  file:
+    path: "{{ gitlab_runner_fichier_config }}"
+    state: touch
+
+- name: check svc
+  command: "gitlab-runner verify"
+  ignore_errors: true
+  changed_when: false
+  check_mode: no
+  register: veri_runner
+
+- name: save svc
+  command: >
+    gitlab-runner register
+    --non-interactive
+    --url 'http://{{ host }}:{{ gitlab_port }}'
+    --registration-token '{{ gitlab_runner_token }}'
+    --run-untagged  

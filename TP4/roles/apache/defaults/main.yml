@@ -1,0 +1,2 @@
+gitlab_site: "{{ host }}"
+gitlab_site_error_log: "/var/log/apache2/{{ gitlab_site }}"

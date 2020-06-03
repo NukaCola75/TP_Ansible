@@ -1,0 +1,4 @@
+external_url: "external_url 'http://{{ host }}'"
+listen_addresses: "nginx['listen_addresses'] = ['{{ host }}']"
+listen_port: "nginx['listen_port'] = {{ gitlab_port }}"
+listen_https: "nginx['listen_https'] = false"

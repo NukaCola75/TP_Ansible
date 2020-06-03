@@ -1,0 +1,4 @@
+---
+
+gitlab_runner_directory_config: "/etc/gitlab-runner/"
+gitlab_runner_fichier_config: "/etc/gitlab-runner/config.toml"

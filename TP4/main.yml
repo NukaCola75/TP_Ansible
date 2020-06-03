@@ -1,0 +1,12 @@
+---
+
+- hosts: student
+  become: true
+  vars:
+    host: localhost
+    gitlab_port: 8888
+  vars_files:
+    - secure.yml
+  roles:
+    - apache
+    - gitlab

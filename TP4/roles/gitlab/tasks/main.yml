@@ -1,0 +1,60 @@
+---
+
+- name: Gitlab deps
+  apt:
+    pkg:
+        - curl
+        - openssh-server
+        - ca-certificates
+        - postfix
+
+- name: Get Script
+  get_url:
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+    dest: /tmp
+    mode: '0766'
+    
+- name: Exec Script
+  script: /tmp/script.deb.sh
+
+- name: Install Gitlab
+  apt:
+    name: "gitlab-ce"
+
+- name: Conf gitlab 1
+  lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    regexp: ^external_url \'http\:\/\/gitlab.example.com\'
+    line: "{{ external_url }}"
+  
+- name: Conf gitlab 2
+  lineinfile:
+      path: /etc/gitlab/gitlab.rb
+      regexp: ^nginx\[\'listen_addresses\'\]
+      line: "{{ listen_addresses }}"
+
+- name: Conf gitlab 3
+  lineinfile:
+      path: /etc/gitlab/gitlab.rb
+      regexp: ^nginx\[\'listen_port\'\]
+      line: "{{ listen_port }}"
+
+- name: Conf gitlab 4
+  lineinfile:
+      path: /etc/gitlab/gitlab.rb
+      regexp: ^nginx\[\'listen_https\'\]
+      line: "{{ listen_https }}"
+  
+- name: Reconfigure
+  command: gitlab-ctl reconfigure
+
+- name: Root passphrase
+  shell: >
+    gitlab-rails runner "
+      user = User.first;
+      user.username = '{{ gitlab_root_username }}';
+      user.password = '{{ gitlab_root_password }}';
+      user.password_confirmation = '{{ gitlab_root_password }}';
+      user.password_automatically_set = false;
+      user.save!"
+
